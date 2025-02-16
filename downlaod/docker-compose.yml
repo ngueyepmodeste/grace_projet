@@ -1,51 +1,27 @@
 version: '3.8'
 
 services:
-  # Service pour le backend PHP
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
-    ports:
-      - "8080:80"
-    volumes:
-      - ./backend:/var/www/html
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  # Service pour le frontend Nginx
-  frontend:
-    image: frontend:1.0
-    container_name: frontend
+  web:
+    image: backend:1.1
+    container_name: app_grace
     ports:
       - "80:80"
-    networks:
-      - app-network
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
 
-  # Service pour la base de données MySQL
   db:
-    image: mysql:8.0
-    container_name: mysql-db
+    image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mon_panier
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydb
       MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+      MYSQL_PASSWORD: user_password
     ports:
       - "3306:3306"
     volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - app-network
+      - db-data:/var/lib/mysql
 
-# Volumes pour persister les données de la base de données
 volumes:
-  db_data:
-
-# Réseau pour la communication entre les services
-networks:
-  app-network:
-    driver: bridge
+  db-data:
